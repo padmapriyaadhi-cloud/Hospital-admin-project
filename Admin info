@@ -1,0 +1,170 @@
+package crud;
+import java.sql.*;
+import java.util.Scanner;
+
+public class admininfo {
+	Scanner sc=new Scanner(System.in);
+	
+	boolean userlogin() {
+		try {
+			System.out.println("Enter Username=");
+			String username=sc.nextLine();
+			System.out.println("Enter Password=");
+			String password=sc.nextLine();
+			Connection con=DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb","root","adhikesavan05");
+			PreparedStatement ps=con.prepareStatement("select * from admins where username=? and password=?");
+			ps.setString(1, username);
+			ps.setString(2, password);
+			ResultSet rs=ps.executeQuery();
+			boolean login=rs.next();
+			return login;
+			}
+		catch(Exception e){
+			System.out.println(e);
+			return false;
+		}
+	}
+	void admindetails() {
+		while(true) {
+			System.out.println("\n----Admin Deatils----");
+			System.out.println("\n1.Add Admins\n2.Update Admins\n3.Delete Admins\n4.Find Admins\n5.Print Admins\n6.Exit\nChoose any option=");
+			int ad=sc.nextInt();
+			if(ad==1) {
+				addadmininfo();
+			}
+			else if(ad==2) {
+				updateadmininfo();
+			}
+			else if(ad==3) {
+				deleteadmininfo();
+			}
+			else if(ad==4) {
+				findadmininfo();
+			}
+			else if(ad==5) {
+				printadmininfo();
+			}
+			else if(ad==6) {
+				System.out.println("Thank you...");
+			}
+			else {
+				System.out.println("Invalid choice");
+			}
+		}
+	}
+	void addadmininfo() {
+		try {
+			System.out.println("Enter Username=");
+			String username=sc.nextLine();
+			System.out.println("Enter Password=");
+			String password=sc.nextLine();
+			Connection con=DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb","root","adhikesavan05");
+			PreparedStatement ps=con.prepareStatement("insert into admins values(?,?)");
+			ps.setString(1, username);
+			ps.setString(2,password);
+			int result=ps.executeUpdate();
+			con.close();
+			System.out.println((result!=0)?"Data saved...":"Data not saved...");
+			
+		}
+		catch(Exception e) {
+			System.out.println(e);
+		}
+	}
+	void updateadmininfo()
+	{
+	    try
+	    {
+	        System.out.println("Enter username=");
+	        String username = sc.next();
+	        System.out.println("Enter password=");
+	        String password = sc.next();
+	        Connection con = DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb","root","adhikesavan05");
+	        PreparedStatement ps = con.prepareStatement("update admins set password = ? where username =?");
+	        ps.setString(1, password);
+	        ps.setString(2, username);
+	        int result = ps.executeUpdate();
+	        con.close();
+	        System.out.println((result!=0)?"Data updated..." : "Invalid name");    
+	    }
+	    catch(Exception e)
+	    {
+	        System.out.println(e);
+	    }
+	}
+	void deleteadmininfo()
+	{
+	    try
+	    {
+	        System.out.println("Enter username=");
+	        String username = sc.next();
+	       
+	        Connection con = DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb","root","adhikesavan05");
+	        PreparedStatement ps = con.prepareStatement("delete from admins where username =?");
+	        ps.setString(1, username);
+	        int result = ps.executeUpdate();
+	        con.close();
+	        System.out.println((result!=0)?"Data Deleted..." : "Invalid name");    
+	    }
+	    catch(Exception e)
+	    {
+	        System.out.println(e);
+	    }
+	}
+	void findadmininfo()
+	{
+	    try
+	    {
+	        System.out.println("Enter username=");
+	        String username = sc.next();
+	       
+	        Connection con = DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb","root","adhikesavan05");
+	        PreparedStatement ps = con.prepareStatement("select * from admins where username =?");
+	        ps.setString(1, username);
+	        ResultSet rs = ps.executeQuery();
+	        int count=0;
+	        while(rs.next())
+	        {
+	            System.out.println("username ="+ rs.getString(1));
+	            count++;
+	        }
+	        if(count==0)
+	        {
+	            System.out.println("Invalid Name");
+	        }
+	        con.close();
+	       
+	    }
+	    catch(Exception e)
+	    {
+	        System.out.println(e);
+	    }
+	}
+	
+	void printadmininfo()
+	{
+	    try
+	    {
+	        Connection con = DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb","root","adhikesavan05");
+	        Statement st = con.createStatement();
+	        ResultSet rs = st.executeQuery("select * from admins");
+	        int count=0;
+	        while(rs.next())
+	        {
+	            System.out.println("Username ="+ rs.getString(1));
+	            System.out.println("Password="+ rs.getString(2));
+	            count++;
+	        }
+	        if(count==0)
+	        {
+	            System.out.println("No Data Found");
+	        }
+	        con.close();
+	       
+	    }
+	    catch(Exception e)
+	    {
+	        System.out.println(e);
+	    }
+	}
+}
