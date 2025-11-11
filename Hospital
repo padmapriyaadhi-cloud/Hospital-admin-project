@@ -1,0 +1,50 @@
+package crud;
+import java.sql.*;
+import java.util.Scanner;
+
+public class hospital {
+
+	public static void main(String[] args) {
+		admininfo a=new admininfo();
+		patientinfo p=new patientinfo();
+		doctorinfo d=new doctorinfo();
+		patient_visit_history pv=new patient_visit_history();
+		
+		
+		if(a.userlogin()) {
+			System.out.println("Login successfully");
+		}
+		else {
+			System.out.println("login failed");
+			return;
+		}
+		
+		while(true) {
+			System.out.println("\n1.Admins Information\n2.Patient Information\n3.Doctor Information\n4.Patient_visit_history\n5.Exit\nChoose Option=");
+			Scanner sc=new Scanner(System.in);
+			int choice=sc.nextInt();
+			if(choice==1) {
+				a.admindetails();
+			}
+			else if(choice==2) {
+				p.patientdetails();
+			}
+			else if(choice==3) {
+				d.doctordetails();
+			}
+			else if(choice==4) {
+				pv.displayvisithistory();
+			}
+			else if(choice==5) {
+				System.out.println("Thank you....");
+				break;
+			}
+			else {
+				System.out.println("Invalid choice");
+			}
+		}
+		
+
+	}
+
+}
