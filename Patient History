@@ -1,0 +1,44 @@
+package crud;
+
+import java.sql.*;
+
+public class patient_visit_history {
+    public void displayvisithistory() {
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb", "root", "adhikesavan05");
+
+            String info =
+                "select pv.visit_id, pi.patient_name, pv.doctor_id, d.doctor_name, d.doctor_timing, d.fees_structure, pv.disease, pv.registration_date " +
+                "from patient_visit pv " +
+                "join patientinfo pi on pv.patient_id = pi.patient_id " +
+                "join doctorinfo d on pv.doctor_id = d.doctor_id";
+
+            PreparedStatement ps = con.prepareStatement(info);
+            ResultSet rs = ps.executeQuery();
+
+            System.out.println("\n--- All Visit History ---");
+            boolean patient = false;
+            while (rs.next()) {
+                patient = true;
+                System.out.println("Visit ID=" + rs.getInt("visit_id"));
+                System.out.println("Patient Name=" + rs.getString("patient_name"));
+                System.out.println("Doctor ID= " + rs.getInt("doctor_id"));
+                System.out.println("Doctor Name= " + rs.getString("doctor_name"));
+                System.out.println("Fees Structure= ₹" + rs.getInt("fees_structure"));
+                System.out.println("Disease= " + rs.getString("disease"));
+                System.out.println("doctor timing=" + rs.getString("doctor_timing"));
+                System.out.println("Registration Date= " + rs.getString("registration_date"));
+                System.out.println("-----------------------------");
+            }
+
+            if (!patient) {
+                System.out.println("No Visit History Found.");
+            }
+
+            con.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+    
+}
