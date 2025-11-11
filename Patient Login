@@ -1,0 +1,91 @@
+package crud;
+
+import java.sql.*;
+import java.util.Scanner;
+
+public class Patient {
+    Scanner sc = new Scanner(System.in);
+
+    public void patientLogin() {
+        try {
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost/hospitaldb", "root", "adhikesavan05");
+            System.out.print("Enter your Phone Number= ");
+            String phone_number = sc.nextLine();
+
+            String sql = "select * from patientinfo where phone_num = ?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, phone_number);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Login Successfully!");
+                int patient_id = rs.getInt("patient_id");
+                String patient_name = rs.getString("patient_name");
+                System.out.println("Welcome, " + patient_name);
+
+                System.out.print("Enter your Disease= ");
+                String disease = sc.nextLine();
+
+                System.out.print("Enter Doctor ID= ");
+                int doctor_id = sc.nextInt();
+                sc.nextLine();
+
+                System.out.print("Enter today's Date= ");
+                String registration_date = sc.nextLine();
+
+                String inserting = "insert into patient_visit (patient_id, doctor_id, disease, registration_date) values (?, ?, ?, ?)";
+                PreparedStatement hvalue = con.prepareStatement(inserting);
+                hvalue.setInt(1, patient_id);
+                hvalue.setInt(2, doctor_id);
+                hvalue.setString(3, disease);
+                hvalue.setString(4, registration_date);
+
+                int count = hvalue.executeUpdate();
+
+                if (count > 0) {
+                    System.out.println("New Visit Added Successfully.");
+                } else {
+                    System.out.println("Failed to Add Visit.");
+                }
+
+                String alldetails =
+                    "select pv.visit_id, pv.doctor_id, d.doctor_name, d.fees_structure, d.doctor_timing, pv.disease, pv.registration_date " +
+                    "from patient_visit pv " +
+                    "join doctorinfo d on pv.doctor_id = d.doctor_id " +
+                    "where pv.patient_id = ? " +
+                    "order by pv.visit_id desc " +
+                    "limit 1";
+                PreparedStatement doctorps = con.prepareStatement(alldetails);
+                doctorps.setInt(1, patient_id);
+                ResultSet results = doctorps.executeQuery();
+
+                System.out.println("\n--- Current Visit Details ---");
+                while (results.next()) {
+                    System.out.println("Visit ID= " + results.getInt("visit_id"));
+                    System.out.println("Patient Name= " + patient_name);
+                    System.out.println("Doctor ID= " + results.getInt("doctor_id"));
+                    System.out.println("Doctor Name= " + results.getString("doctor_name"));
+                    System.out.println("Fees Structure= ₹" + results.getInt("fees_structure"));
+                    System.out.println("Doctor Timing= " + results.getString("doctor_timing"));
+                    System.out.println("Disease= " + results.getString("disease"));
+                    System.out.println("Registration Date= " + results.getString("registration_date"));
+                    System.out.println("-----------------------------");
+                }
+
+            } else {
+                System.out.println("New Patient! Please Register First.");
+                patientinfo pinfo = new patientinfo();
+                pinfo.addpatientinfo();
+            }
+
+            con.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        Patient plogin = new Patient();
+        plogin.patientLogin();
+    }
+}
